@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PePets_API.Data;
+using PePets_API.Repositories;
 
 namespace PePets_API
 {
@@ -26,6 +27,8 @@ namespace PePets_API
             );
 
             services.AddControllers();
+
+            services.AddTransient<IPostRepository, PostRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,6 +7,8 @@ namespace PePets_API.Models
 {
     public class Post
     {
+        internal string _images { get; set; }
+
         [Required]
         public Guid Id { get; set; }
 
@@ -16,7 +17,12 @@ namespace PePets_API.Models
 
         public string Description { get; set; }
 
-        public List<string> Images { get; set; }
+        [NotMapped]
+        public string[] Images
+        {
+            get { return _images == null ? null : JsonConvert.DeserializeObject<string[]>(_images); }
+            set { _images = JsonConvert.SerializeObject(value); }
+        }
         public int Cost { get; set; }
         public string PhoneNumber { get; set; }
         //public PetDescription PetDescription { get; set; }

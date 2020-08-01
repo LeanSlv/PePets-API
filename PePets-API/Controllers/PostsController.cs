@@ -1,19 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using PePets_API.Models;
+using PePets_API.Repositories;
 
 namespace PePets_API.Controllers
 {
     [Route("api/[controller]")]
     public class PostsController : Controller
     {
+        private readonly IPostRepository _postRepository;
+
+        public PostsController(IPostRepository postRepository)
+        {
+            _postRepository = postRepository;
+        }
+
         // GET: api/<controller>
         [HttpGet]
-        public IEnumerable<string> GetAll()
+        public IEnumerable<Post> GetAll()
         {
-            return new string[] { "value1", "value2" };
+            return _postRepository.GetAll();
         }
 
         // GET api/<controller>/5
