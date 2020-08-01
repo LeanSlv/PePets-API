@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PePets_API.Models;
 using PePets_API.Repositories;
@@ -24,9 +26,9 @@ namespace PePets_API.Controllers
 
         // GET api/<controller>/5
         [HttpGet("{id}")]
-        public string GetById(int id)
+        public async Task<Post> GetById(Guid id)
         {
-            return "value";
+            return await _postRepository.GetByIdAsync(id);
         }
 
         // POST api/<controller>
