@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using PePets_API.Models;
 using PePets_API.Repositories;
 
@@ -28,9 +26,13 @@ namespace PePets_API.Controllers
 
         // GET api/<controller>/5
         [HttpGet("{id}")]
-        public async Task<Post> GetById(Guid id)
+        public async Task<ActionResult<Post>> GetById(Guid id)
         {
-            return await _postRepository.GetByIdAsync(id);
+            Post post = await _postRepository.GetByIdAsync(id);
+            if (post == null)
+                return NotFound();
+
+            return post;
         }
 
         // POST api/<controller>
