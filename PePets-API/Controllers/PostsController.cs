@@ -59,8 +59,15 @@ namespace PePets_API.Controllers
 
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
+            Post post = await _postRepository.GetByIdAsync(id);
+            if (post == null)
+                return NotFound();
+
+            await _postRepository.DeleteAsync(post);
+
+            return NoContent();
         }
     }
 }
