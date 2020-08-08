@@ -47,8 +47,14 @@ namespace PePets_API.Controllers
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public async Task<IActionResult> Update(Guid id, [FromBody]Post post)
         {
+            if (id != post.Id)
+                return BadRequest();
+
+            await _postRepository.UpdateAsync(post);
+
+            return NoContent();
         }
 
         // DELETE api/<controller>/5
