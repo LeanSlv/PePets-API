@@ -9,7 +9,6 @@ namespace PePets_API.Models
     {
         internal string _images { get; set; }
 
-        [Required]
         public Guid Id { get; set; }
 
         [Required]
