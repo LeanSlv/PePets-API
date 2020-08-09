@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using PePets_API.Data;
+using PePets_API.Models;
 using PePets_API.Repositories;
 using System;
 using System.Text;
@@ -49,6 +51,8 @@ namespace PePets_API
             services.AddControllers();
 
             services.AddTransient<IPostRepository, PostRepository>();
+            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<UserManager<User>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
