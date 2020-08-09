@@ -1,11 +1,15 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using PePets_API.Data;
 using PePets_API.Repositories;
+using System;
+using System.Text;
 
 namespace PePets_API
 {
@@ -26,6 +30,22 @@ namespace PePets_API
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
             );
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = "ValidIssuer",
+                        ValidAudience = "ValidateAudience",
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("IssuerSigningSecretKey")),
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
+
             services.AddControllers();
 
             services.AddTransient<IPostRepository, PostRepository>();
@@ -44,6 +64,7 @@ namespace PePets_API
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
