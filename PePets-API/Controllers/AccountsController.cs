@@ -21,44 +21,49 @@ namespace PePets_API.Controllers
             _accountRepository = accountRepository;
         }
 
-        [HttpPost]
+        [HttpPost("/token")]
         public async Task<IActionResult> Token([FromBody]LoginViewModel model)
         {
-            var identity = await GetIdentity(model.UserName, model.Password);
+            ClaimsIdentity identity = await GetIdentity(model.UserName, model.Password);
             if (identity == null)
-            {
                 return BadRequest(new { errorText = "Invalid username or password." });
-            }
 
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
                     issuer: AuthOptions.ISSUER,
                     audience: AuthOptions.AUDIENCE,
                     notBefore: now,
-                    claims: identity,
+                    claims: identity.Claims,
                     expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
                     signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-            return Ok(encodedJwt);
-        }
-        private async Task<IReadOnlyCollection<Claim>> GetIdentity(string userName, string password)
-        {
-            List<Claim> claims = null;
+            var response = new
+            {
+                access_token = encodedJwt,
+                username = identity.Name
+            };
 
+            return Ok(response);
+        }
+        private async Task<ClaimsIdentity> GetIdentity(string userName, string password)
+        {
             User user = await _accountRepository.GetByNameAsync(userName);
             if(user != null)
             {
                 if(user.PasswordHash == password)
                 {
-                    claims = new List<Claim>
+                    List<Claim> claims = new List<Claim>
                     {
                         new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
                     };
+
+                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, ClaimsIdentity.DefaultNameClaimType);
+                    return claimsIdentity;
                 }
             }
 
-            return claims;
+            return null;
         }
     }
 }
