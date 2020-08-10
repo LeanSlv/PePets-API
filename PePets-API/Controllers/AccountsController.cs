@@ -49,21 +49,19 @@ namespace PePets_API.Controllers
         private async Task<ClaimsIdentity> GetIdentity(string userName, string password)
         {
             User user = await _accountRepository.GetByNameAsync(userName);
-            if(user != null)
-            {
-                if(user.PasswordHash == password)
-                {
-                    List<Claim> claims = new List<Claim>
+            if (user == null)
+                return null;
+
+            if (await _accountRepository.CheckPasswordAsync(user, password) == false)
+                return null;
+
+            var claims = new List<Claim>
                     {
                         new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
                     };
 
-                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, ClaimsIdentity.DefaultNameClaimType);
-                    return claimsIdentity;
-                }
-            }
-
-            return null;
+            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, ClaimsIdentity.DefaultNameClaimType);
+            return claimsIdentity;
         }
     }
 }

@@ -49,5 +49,10 @@ namespace PePets_API.Repositories
         {
             return await _userManager.FindByNameAsync(userName);
         }
+
+        public async Task<bool> CheckPasswordAsync(User user, string password)
+        {
+            return await _userManager.CheckPasswordAsync(user, password);
+        }
     }
 }
